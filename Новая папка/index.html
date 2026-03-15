@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>МЫШКИ: БРОНЗА 🥉 ЗОЛОТО 🥇 АЛМАЗ 💎</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a1f, #1a1a3a);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* ЗВЕЗДЫ НА ФОНЕ */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        /* ОСНОВНОЙ КОНТЕЙНЕР */
+        #game {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+        
+        /* СТИЛИ ДЛЯ МЫШЕК */
+        .mouse {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50% 50% 30% 30%;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: run 4s infinite;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        
+        /* ОБЫЧНАЯ МЫШКА (СЕРАЯ) */
+        .mouse.normal {
+            background: linear-gradient(145deg, #e0e0e0, #a0a0a0);
+            border: 3px solid #666;
+            box-shadow: 0 0 20px white;
+        }
+        
+        .mouse.normal::before {
+            content: '🐭';
+            position: absolute;
+            font-size: 40px;
+            left: 15px;
+            top: 10px;
+        }
+        
+        /* БРОНЗОВАЯ МЫШКА */
+        .mouse.bronze {
+            background: linear-gradient(145deg, #cd7f32, #b87333, #8B4513);
+            border: 4px solid #cd7f32;
+            box-shadow: 0 0 30px #cd7f32;
+            animation: bronzeGlow 1s infinite;
+        }
+        
+        .mouse.bronze::before {
+            content: '🥉';
+            position: absolute;
+            font-size: 45px;
+            left: 12px;
+            top: 8px;
+        }
+        
+        @keyframes bronzeGlow {
+            0%, 100% { filter: brightness(1); box-shadow: 0 0 30px #cd7f32; }
+            50% { filter: brightness(1.3); box-shadow: 0 0 60px #cd7f32; }
+        }
+        
+        /* ЗОЛОТАЯ МЫШКА */
+        .mouse.gold {
+            background: linear-gradient(145deg, #ffd700, #ffaa00, #ff8800);
+            border: 4px solid gold;
+            box-shadow: 0 0 50px gold;
+            animation: goldGlow 0.7s infinite;
+        }
+        
+        .mouse.gold::before {
+            content: '🥇';
+            position: absolute;
+            font-size: 50px;
+            left: 10px;
+            top: 5px;
+        }
+        
+        @keyframes goldGlow {
+            0%, 100% { filter: brightness(1); box-shadow: 0 0 50px gold; }
+            50% { filter: brightness(1.5); box-shadow: 0 0 100px gold; }
+        }
+        
+        /* АЛМАЗНАЯ МЫШКА */
+        .mouse.diamond {
+            background: linear-gradient(145deg, #b9f2ff, #a0e0ff, #80c0ff);
+            border: 4px solid #b9f2ff;
+            box-shadow: 0 0 70px #b9f2ff, 0 0 140px #80c0ff;
+            animation: diamondGlow 0.3s infinite;
+        }
+        
+        .mouse.diamond::before {
+            content: '💎';
+            position: absolute;
+            font-size: 55px;
+            left: 8px;
+            top: 2px;
+        }
+        
+        @keyframes diamondGlow {
+            0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+            50% { filter: brightness(2) hue-rotate(30deg); }
+        }
+        
+        @keyframes run {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(40px, -30px) rotate(10deg); }
+            50% { transform: translate(-30px, 40px) rotate(-10deg); }
+            75% { transform: translate(35px, 35px) rotate(5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        
+        /* ЛАПА ДЛЯ ХВАТАНИЯ */
+        .paw {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #ffaa00, #ff5500);
+            border-radius: 50%;
+            z-index: 1000;
+            pointer-events: none;
+            animation: grab 0.3s forwards;
+        }
+        
+        .paw::before {
+            content: '🐾';
+            font-size: 100px;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+        }
+        
+        @keyframes grab {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.5) rotate(20deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 0; }
+        }
+        
+        /* ХВОСТЫ КОТОВ */
+        .cat-tail {
+            position: absolute;
+            width: 150px;
+            height: 30px;
+            background: linear-gradient(90deg, #8B4513, #D2691E);
+            border-radius: 50% 20% 20% 50%;
+            transform-origin: left;
+            animation: wag 0.5s infinite;
+            z-index: 5;
+            filter: drop-shadow(0 5px 10px black);
+        }
+        
+        @keyframes wag {
+            0%, 100% { transform: rotate(0deg) scaleX(1); }
+            25% { transform: rotate(30deg) scaleX(1.3); }
+            75% { transform: rotate(-30deg) scaleX(1.3); }
+        }
+        
+        /* МОРДЫ КОТОВ */
+        .cat-face {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: orange;
+            border-radius: 50%;
+            border: 4px solid brown;
+            animation: faceAppear 0.5s forwards;
+            z-index: 100;
+        }
+        
+        .cat-face::before {
+            content: '😺';
+            font-size: 70px;
+            position: absolute;
+            top: 25px;
+            left: 25px;
+        }
+        
+        @keyframes faceAppear {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+        
+        /* СЧЕТЧИКИ */
+        .counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            padding: 25px 45px;
+            font-size: 45px;
+            border-radius: 70px;
+            z-index: 1000;
+            color: gold;
+            font-weight: bold;
+            border: 4px solid gold;
+            box-shadow: 0 0 50px gold;
+            backdrop-filter: blur(10px);
+        }
+        
+        .score-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.9);
+            padding: 20px 40px;
+            font-size: 35px;
+            border-radius: 60px;
+            z-index: 1000;
+            color: white;
+            border: 4px solid cyan;
+            backdrop-filter: blur(10px);
+        }
+        
+        .event-timer {
+            position: fixed;
+            top: 120px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            padding: 20px 30px;
+            font-size: 30px;
+            border-radius: 50px;
+            z-index: 1000;
+            color: #ff66ff;
+            border: 4px solid #ff66ff;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        /* СООБЩЕНИЯ */
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 40px 80px;
+            font-size: 70px;
+            border-radius: 50px;
+            z-index: 2000;
+            animation: messagePop 1.5s forwards;
+            border: 6px solid white;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .message.normal { background: linear-gradient(45deg, gray, white); color: black; }
+        .message.bronze { background: linear-gradient(45deg, #cd7f32, #b87333); color: white; }
+        .message.gold { background: linear-gradient(45deg, gold, orange); color: black; }
+        .message.diamond { background: linear-gradient(45deg, #b9f2ff, #80c0ff); color: black; }
+        
+        @keyframes messagePop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+        }
+        
+        .reset-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 20px 40px;
+            background: rgba(0,0,0,0.9);
+            border: 4px solid gold;
+            border-radius: 60px;
+            color: gold;
+            font-size: 25px;
+            cursor: pointer;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .reset-button:hover {
+            background: gold;
+            color: black;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div id="game"></div>
+    
+    <div class="counter" id="counter">0</div>
+    <div class="score-counter" id="scoreCounter">💰 ОЧКИ: 0</div>
+    <div class="event-timer" id="eventTimer"></div>
+    
+    <button class="reset-button" onclick="resetGame()">🔄 ПЕРЕЗАПУСК</button>
+
+    <script>
+        // ========== ПЕРЕМЕННЫЕ ==========
+        let caughtCount = 0;
+        let totalScore = 0;
+        let eventActive = false;
+        let eventTimer = null;
+        let eventEndTime = null;
+        
+        // ШАНСЫ ПОЯВЛЕНИЯ МЫШЕК:
+        // Обычная: 70%, Бронза: 20%, Золото: 7%, Алмаз: 3%
+        
+        // ========== СОЗДАНИЕ ЗВЕЗД ==========
+        for (let i = 0; i < 200; i++) {
+            let star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 4 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            document.getElementById('stars').appendChild(star);
+        }
+        
+        // ========== СОЗДАНИЕ МЫШКИ ==========
+        function createMouse(isEvent = false) {
+            let mouse = document.createElement('div');
+            mouse.className = 'mouse';
+            
+            // ОПРЕДЕЛЯЕМ ТИП МЫШКИ
+            let rand = Math.random() * 100;
+            let type = 'normal';
+            
+            if (eventActive || isEvent) {
+                // ВО ВРЕМЯ ИВЕНТА - ТОЛЬКО ЦЕННЫЕ МЫШКИ!
+                let eventRand = Math.random() * 100;
+                if (eventRand < 50) type = 'bronze';
+                else if (eventRand < 85) type = 'gold';
+                else type = 'diamond';
+            } else {
+                // ОБЫЧНЫЙ РЕЖИМ
+                if (rand < 70) type = 'normal';
+                else if (rand < 90) type = 'bronze';
+                else if (rand < 97) type = 'gold';
+                else type = 'diamond';
+            }
+            
+            mouse.classList.add(type);
+            
+            // ДОБАВЛЯЕМ УШКИ (для всех типов)
+            let leftEar = document.createElement('div');
+            leftEar.style.position = 'absolute';
+            leftEar.style.width = '20px';
+            leftEar.style.height = '20px';
+            leftEar.style.background = type === 'normal' ? '#a0a0a0' : 
+                                      type === 'bronze' ? '#b87333' :
+                                      type === 'gold' ? '#ffaa00' : '#a0e0ff';
+            leftEar.style.borderRadius = '50%';
+            leftEar.style.top = '-8px';
+            leftEar.style.left = '5px';
+            leftEar.style.border = '2px solid #333';
+            
+            let rightEar = leftEar.cloneNode();
+            rightEar.style.left = '45px';
+            
+            mouse.appendChild(leftEar);
+            mouse.appendChild(rightEar);
+            
+            // СЛУЧАЙНАЯ ПОЗИЦИЯ
+            mouse.style.top = Math.random() * 80 + 5 + '%';
+            mouse.style.left = Math.random() * 80 + 5 + '%';
+            
+            // СЛУЧАЙНАЯ СКОРОСТЬ
+            mouse.style.animationDuration = (2 + Math.random() * 4) + 's';
+            
+            // ОБРАБОТЧИК КЛИКА
+            mouse.onclick = function(e) {
+                e.stopPropagation();
+                grabMouse(this);
+            };
+            
+            document.getElementById('game').appendChild(mouse);
+        }
+        
+        // ========== ХВАТАНИЕ МЫШКИ ==========
+        function grabMouse(mouse) {
+            // Получаем координаты
+            let rect = mouse.getBoundingClientRect();
+            let x = rect.left + 35;
+            let y = rect.top + 35;
+            
+            // Определяем тип мышки
+            let type = 'normal';
+            let points = 1;
+            
+            if (mouse.classList.contains('bronze')) {
+                type = 'bronze';
+                points = 2;
+            } else if (mouse.classList.contains('gold')) {
+                type = 'gold';
+                points = 4;
+            } else if (mouse.classList.contains('diamond')) {
+                type = 'diamond';
+                points = 10;
+            }
+            
+            // Создаем лапу
+            let paw = document.createElement('div');
+            paw.className = 'paw';
+            paw.style.left = (x - 100) + 'px';
+            paw.style.top = (y - 100) + 'px';
+            document.body.appendChild(paw);
+            
+            // Удаляем мышку
+            mouse.remove();
+            
+            // Увеличиваем счетчики
+            caughtCount++;
+            totalScore += points;
+            
+            document.getElementById('counter').innerHTML = caughtCount;
+            document.getElementById('scoreCounter').innerHTML = `💰 ОЧКИ: ${totalScore}`;
+            
+            // ПОКАЗЫВАЕМ СООБЩЕНИЕ О ЦЕННОЙ МЫШКЕ
+            if (type !== 'normal') {
+                let msg = document.createElement('div');
+                msg.className = `message ${type}`;
+                msg.innerHTML = type === 'bronze' ? '🥉 +2 ОЧКА!' :
+                               type === 'gold' ? '🥇 +4 ОЧКА!' : '💎 +10 ОЧКОВ!';
+                document.body.appendChild(msg);
+                setTimeout(() => msg.remove(), 1500);
+            }
+            
+            // СОЗДАЕМ ХВОСТ (50%)
+            if (Math.random() > 0.5) {
+                let tail = document.createElement('div');
+                tail.className = 'cat-tail';
+                tail.style.top = (y - 20) + 'px';
+                tail.style.left = (x - 80) + 'px';
+                document.body.appendChild(tail);
+                setTimeout(() => tail.remove(), 2000);
+            }
+            
+            // СОЗДАЕМ МОРДУ (30%)
+            if (Math.random() > 0.7) {
+                let face = document.createElement('div');
+                face.className = 'cat-face';
+                face.style.top = (y - 100) + 'px';
+                face.style.left = (x - 60) + 'px';
+                document.body.appendChild(face);
+                setTimeout(() => face.remove(), 2000);
+            }
+            
+            // ПРОВЕРКА НА ИВЕНТ (КАЖДЫЕ 30 МЫШЕЙ)
+            if (caughtCount % 30 === 0 && caughtCount > 0) {
+                startEvent();
+            }
+            
+            // СОЗДАЕМ НОВУЮ МЫШКУ
+            setTimeout(() => createMouse(), 200);
+            
+            // Удаляем лапу
+            setTimeout(() => paw.remove(), 300);
+        }
+        
+        // ========== ЗАПУСК ИВЕНТА ==========
+        function startEvent() {
+            if (eventActive) {
+                // Если ивент уже идет - продлеваем на 10 секунд
+                eventEndTime += 10000;
+                updateEventTimer();
+                
+                let msg = document.createElement('div');
+                msg.className = 'message diamond';
+                msg.innerHTML = '⏰ ИВЕНТ ПРОДЛЕН! +10 СЕК!';
+                document.body.appendChild(msg);
+                setTimeout(() => msg.remove(), 1500);
+                
+                return;
+            }
+            
+            eventActive = true;
+            eventEndTime = Date.now() + 40000; // 40 секунд
+            
+            // ПОКАЗЫВАЕМ СООБЩЕНИЕ
+            let msg = document.createElement('div');
+            msg.className = 'message diamond';
+            msg.innerHTML = '🎉 ИВЕНТ! 40 СЕКУНД! 🎉\n🥉🥇💎';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 3000);
+            
+            // ПОКАЗЫВАЕМ ТАЙМЕР
+            let timerDiv = document.getElementById('eventTimer');
+            timerDiv.style.display = 'block';
+            
+            // СОЗДАЕМ КУЧУ ЦЕННЫХ МЫШЕК
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => createMouse(true), i * 200);
+            }
+            
+            // ЗАПУСКАЕМ ТАЙМЕР
+            eventTimer = setInterval(() => {
+                let timeLeft = Math.max(0, Math.floor((eventEndTime - Date.now()) / 1000));
+                timerDiv.innerHTML = `⏰ ИВЕНТ: ${timeLeft}с`;
+                
+                if (timeLeft <= 0) {
+                    endEvent();
+                }
+            }, 100);
+        }
+        
+        // ========== ЗАВЕРШЕНИЕ ИВЕНТА ==========
+        function endEvent() {
+            eventActive = false;
+            clearInterval(eventTimer);
+            document.getElementById('eventTimer').style.display = 'none';
+            
+            let msg = document.createElement('div');
+            msg.className = 'message normal';
+            msg.innerHTML = '✨ ИВЕНТ ЗАКОНЧИЛСЯ ✨';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 2000);
+        }
+        
+        // ========== ОБНОВЛЕНИЕ ТАЙМЕРА ==========
+        function updateEventTimer() {
+            // Просто обновляем, таймер сам все сделает
+        }
+        
+        // ========== СБРОС ИГРЫ ==========
+        function resetGame() {
+            // Удаляем все элементы
+            document.querySelectorAll('.mouse, .cat-tail, .cat-face, .paw, .message').forEach(el => el.remove());
+            
+            // Сбрасываем счетчики
+            caughtCount = 0;
+            totalScore = 0;
+            document.getElementById('counter').innerHTML = '0';
+            document.getElementById('scoreCounter').innerHTML = '💰 ОЧКИ: 0';
+            
+            // Завершаем ивент если был
+            if (eventActive) {
+                eventActive = false;
+                clearInterval(eventTimer);
+                document.getElementById('eventTimer').style.display = 'none';
+            }
+            
+            // Создаем новых мышек
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => createMouse(), i * 100);
+            }
+            
+            // Показываем сообщение
+            let msg = document.createElement('div');
+            msg.className = 'message normal';
+            msg.innerHTML = '🔄 НОВАЯ ИГРА!';
+            document.body.appendChild(msg);
+            setTimeout(() => msg.remove(), 1500);
+        }
+        
+        // ========== ЗАПУСК ==========
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => createMouse(), i * 100);
+        }
+        
+        // ========== ДОБАВЛЯЕМ МЫШЕК РАЗ В НЕСКОЛЬКО СЕКУНД ==========
+        setInterval(() => {
+            if (!eventActive && document.querySelectorAll('.mouse').length < 20) {
+                createMouse();
+            }
+        }, 3000);
+        
+        // ========== ХВОСТЫ ПОЯВЛЯЮТСЯ САМИ ==========
+        setInterval(() => {
+            if (Math.random() > 0.6) {
+                let tail = document.createElement('div');
+                tail.className = 'cat-tail';
+                tail.style.top = Math.random() * 90 + '%';
+                tail.style.left = Math.random() * 90 + '%';
+                document.body.appendChild(tail);
+                setTimeout(() => tail.remove(), 2000);
+            }
+        }, 1000);
+        
+        // ========== МОРДЫ ПОЯВЛЯЮТСЯ САМИ ==========
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                let face = document.createElement('div');
+                face.className = 'cat-face';
+                face.style.top = Math.random() * 80 + '%';
+                face.style.left = Math.random() * 80 + '%';
+                document.body.appendChild(face);
+                setTimeout(() => face.remove(), 2000);
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
